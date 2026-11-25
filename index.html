@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONSTER ENERGY | Unleash The Beast — 3D Cinematic Experience</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <!-- Google Fonts: Orbitron, Rajdhani & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Import Map for Three.js r160 -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        tech: ['Rajdhani', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        monster: '#39FF14',
+                        monsterDark: '#166508',
+                        obsidian: '#050505',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar & Core Base Styles */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a1a;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #39FF14;
+        }
+
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Neon Glow Utilities */
+        .neon-text {
+            text-shadow: 0 0 12px rgba(57, 255, 20, 0.75), 0 0 32px rgba(57, 255, 20, 0.45);
+        }
+        .neon-text-strong {
+            text-shadow: 0 0 15px rgba(57, 255, 20, 0.9), 0 0 40px rgba(57, 255, 20, 0.6), 0 0 70px rgba(57, 255, 20, 0.35);
+        }
+        .neon-border {
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.08), inset 0 0 20px rgba(57, 255, 20, 0.04);
+        }
+        .neon-border:hover {
+            border-color: rgba(57, 255, 20, 0.85);
+            box-shadow: 0 0 35px rgba(57, 255, 20, 0.28), inset 0 0 25px rgba(57, 255, 20, 0.12);
+        }
+        .glass-panel {
+            background: rgba(8, 12, 8, 0.62);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        /* Electric Button Shine Animation */
+        .btn-monster {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .btn-monster::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+            transform: skewX(-25deg);
+            transition: left 0.65s ease;
+        }
+        .btn-monster:hover::before {
+            left: 140%;
+        }
+        .btn-monster:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.75);
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.12);
+            height: 5px;
+            border-radius: 999px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #39FF14;
+            box-shadow: 0 0 12px #39FF14;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        /* Preloader Pulse */
+        @keyframes clawPulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.6)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 28px rgba(57, 255, 20, 1)); transform: scale(1.04); }
+        }
+        .claw-glow-anim {
+            animation: clawPulse 1.6s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-[#050505] text-white selection:bg-[#39FF14] selection:text-black">
+
+    <!-- =========================================================
+         CINEMATIC PRELOADER SCREEN
+    ========================================================= -->
+    <div id="preloader" class="fixed inset-0 z-50 bg-[#050505] flex flex-col items-center justify-center px-6 transition-opacity duration-700">
+        <!-- Animated Neon Claw Emblem SVG -->
+        <div class="claw-glow-anim mb-8">
+            <svg width="88" height="110" viewBox="0 0 100 125" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left Claw -->
+                <path d="M16 14 L29 10 L32 22 L28 106 L22 114 L21 25 L13 22 Z" fill="#39FF14"/>
+                <!-- Middle Claw -->
+                <path d="M41 8 L56 4 L59 18 L52 116 L45 123 L46 21 L38 17 Z" fill="#39FF14"/>
+                <!-- Right Claw -->
+                <path d="M68 15 L84 11 L86 24 L77 104 L71 112 L73 26 L65 23 Z" fill="#39FF14"/>
+            </svg>
+        </div>
+
+        <div class="font-display text-xl sm:text-2xl font-black tracking-[0.28em] text-white mb-2 text-center">
+            CHARGING <span class="text-[#39FF14] neon-text">HIGH VOLTAGE</span>
+        </div>
+        <p class="font-tech text-xs sm:text-sm tracking-[0.25em] text-neutral-400 uppercase mb-6">
+            Synthesizing 3D Condensation &amp; Hydro-Surge Engine
+        </p>
+
+        <!-- Voltage Progress Bar -->
+        <div class="w-full max-w-xs h-1.5 bg-neutral-900 rounded-full overflow-hidden border border-[#39FF14]/30 p-[1px]">
+            <div id="loader-bar" class="h-full w-0 bg-[#39FF14] shadow-[0_0_15px_#39FF14] rounded-full transition-all duration-200"></div>
+        </div>
+        <div id="loader-percent" class="font-display text-xs text-[#39FF14] mt-3 tracking-widest">0%</div>
+    </div>
+
+    <!-- =========================================================
+         MOUSE-FOLLOWING NEON GREEN CURSOR AURA
+    ========================================================= -->
+    <div id="cursor-aura" class="fixed pointer-events-none z-10 w-[440px] h-[440px] rounded-full -translate-x-1/2 -translate-y-1/2 opacity-40 transition-opacity duration-300 hidden md:block"
+         style="background: radial-gradient(circle, rgba(57,255,20,0.18) 0%, rgba(57,255,20,0.04) 40%, transparent 70%);">
+    </div>
+
+    <!-- =========================================================
+         FULL-SCREEN 3D WEBGL CANVAS STAGE
+    ========================================================= -->
+    <div id="webgl-container" class="fixed inset-0 z-0 w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+    <!-- Vignette & Bottom Atmospheric Gradient Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_25%,rgba(5,5,5,0.82)_100%)]"></div>
+
+    <!-- =========================================================
+         GLASSMORPHIC NAVIGATION BAR
+    ========================================================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-4 sm:px-8 py-3.5">
+        <nav class="max-w-7xl mx-auto glass-panel neon-border rounded-2xl px-5 sm:px-7 py-3 flex items-center justify-between">
+            <!-- Brand Emblem -->
+            <a href="#hero" class="flex items-center gap-3 group">
+                <svg width="26" height="32" viewBox="0 0 100 125" fill="none" class="transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(57,255,20,0.85)]">
+                    <path d="M16 14 L29 10 L32 22 L28 106 L22 114 L21 25 L13 22 Z" fill="#39FF14"/>
+                    <path d="M41 8 L56 4 L59 18 L52 116 L45 123 L46 21 L38 17 Z" fill="#39FF14"/>
+                    <path d="M68 15 L84 11 L86 24 L77 104 L71 112 L73 26 L65 23 Z" fill="#39FF14"/>
+                </svg>
+                <div class="flex flex-col">
+                    <span class="font-display font-black text-base sm:text-lg tracking-[0.2em] text-white leading-none">MONSTER</span>
+                    <span class="font-tech font-bold text-[10px] tracking-[0.42em] text-[#39FF14] leading-tight">ENERGY</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <div class="hidden lg:flex items-center gap-7 font-tech font-semibold text-sm tracking-[0.18em] uppercase text-neutral-300">
+                <a href="#hero" class="hover:text-[#39FF14] transition-colors">Hero</a>
+                <a href="#experience" class="hover:text-[#39FF14] transition-colors">Experience</a>
+                <a href="#features" class="hover:text-[#39FF14] transition-colors">Features</a>
+                <a href="#showcase" class="hover:text-[#39FF14] transition-colors">Showcase</a>
+                <a href="#brand" class="hover:text-[#39FF14] transition-colors">Brand</a>
+                <a href="#cta" class="hover:text-[#39FF14] transition-colors">Unleash</a>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-2.5 sm:gap-3">
+                <button id="nav-surge-btn" class="btn-monster px-3.5 sm:px-4 py-2 rounded-xl bg-[#39FF14]/15 hover:bg-[#39FF14] text-[#39FF14] hover:text-black border border-[#39FF14]/60 font-display font-bold text-[11px] sm:text-xs tracking-widest uppercase flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Surge Boost</span>
+                </button>
+
+                <!-- Mobile Hamburger -->
+                <button id="mobile-nav-toggle" class="lg:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white" aria-label="Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Dropdown Drawer -->
+        <div id="mobile-nav-menu" class="hidden lg:hidden max-w-7xl mx-auto mt-2 glass-panel neon-border rounded-2xl p-4 flex-col gap-2 font-tech font-bold text-base tracking-[0.2em] uppercase">
+            <a href="#hero" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">01 // Hero</a>
+            <a href="#experience" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">02 // Experience</a>
+            <a href="#features" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">03 // Features</a>
+            <a href="#showcase" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">04 // Showcase</a>
+            <a href="#brand" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">05 // Brand</a>
+            <a href="#cta" class="px-4 py-2.5 rounded-xl hover:bg-[#39FF14]/15 hover:text-[#39FF14] transition-colors">06 // Unleash</a>
+        </div>
+    </header>
+
+    <!-- =========================================================
+         MAIN SCROLLABLE CINEMATIC STORYBOARD
+    ========================================================= -->
+    <main class="relative z-20 pointer-events-none">
+
+        <!-- =====================================================
+             SECTION 1: HERO — UNLEASH THE BEAST
+        ===================================================== -->
+        <section id="hero" class="min-h-screen flex flex-col justify-between pt-28 pb-10 px-4 sm:px-8 max-w-7xl mx-auto">
+            <!-- Top Status Badge -->
+            <div class="pointer-events-auto self-start">
+                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-panel border border-[#39FF14]/40 text-xs font-tech font-bold tracking-[0.25em] uppercase text-[#39FF14]">
+                    <span class="w-2 h-2 rounded-full bg-[#39FF14] animate-ping"></span>
+                    <span>ORIGINAL GREEN // TAURINE + L-CARNITINE</span>
+                </div>
+            </div>
+
+            <!-- Hero Copy & Dual CTAs (Positioned so central 3D can remains unobstructed & dramatic) -->
+            <div class="my-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-6 pointer-events-auto">
+                    <h1 class="hero-stagger font-display font-black text-4xl sm:text-6xl xl:text-7xl tracking-tight leading-[1.02] uppercase mb-5">
+                        UNLEASH <br>
+                        <span class="text-[#39FF14] neon-text-strong">THE BEAST</span>
+                    </h1>
+
+                    <p class="hero-stagger font-tech text-lg sm:text-2xl text-neutral-200 tracking-wide font-medium max-w-lg mb-8">
+                        Unleash your energy. Own your moment. High-voltage refreshment forged in obsidian black and electric neon fury.
+                    </p>
+
+                    <div class="hero-stagger flex flex-wrap items-center gap-4">
+                        <a href="#experience" id="hero-explore-btn" class="btn-monster px-7 py-4 rounded-xl bg-[#39FF14] text-black font-display font-extrabold text-xs sm:text-sm tracking-[0.18em] uppercase shadow-[0_0_25px_rgba(57,255,20,0.5)]">
+                            EXPLORE ENERGY
+                        </a>
+                        <a href="#features" class="btn-monster px-7 py-4 rounded-xl glass-panel border border-white/25 hover:border-[#39FF14] text-white hover:text-[#39FF14] font-display font-bold text-xs sm:text-sm tracking-[0.18em] uppercase">
+                            DISCOVER MORE
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Interaction Prompt -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-white/10 pointer-events-auto">
+                <div class="flex items-center gap-3 text-xs font-tech tracking-[0.2em] uppercase text-neutral-400">
+                    <span class="px-2.5 py-1 rounded bg-[#39FF14]/15 text-[#39FF14] border border-[#39FF14]/30 font-bold">3D LIVE</span>
+                    <span>Drag anywhere to spin can • Move cursor to bend electric field</span>
+                </div>
+                <div class="font-display text-xs tracking-[0.25em] text-[#39FF14] uppercase animate-bounce">
+                    SCROLL TO CHARGE &darr;
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECTION 2: EXPERIENCE THE ENERGY (3D STUDIO INSPECTOR)
+        ===================================================== -->
+        <section id="experience" class="min-h-screen py-24 px-4 sm:px-8 max-w-7xl mx-auto flex items-center">
+            <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Left Spacer on Desktop so 3D Can takes center-left stage -->
+                <div class="lg:col-span-6 h-48 sm:h-64 lg:h-auto flex items-end justify-center lg:justify-start">
+                    <div class="pointer-events-auto glass-panel border border-white/10 rounded-2xl px-4 py-2.5 text-xs font-tech tracking-[0.2em] uppercase text-neutral-300 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#39FF14]"></span>
+                        <span>Interactive 360° Can Stage Active</span>
+                    </div>
+                </div>
+
+                <!-- Right Interactive Control Deck -->
+                <div class="lg:col-span-6 pointer-events-auto glass-panel neon-border rounded-3xl p-6 sm:p-9 shadow-2xl">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-tech font-bold text-xs tracking-[0.3em] uppercase text-[#39FF14]">02 // INTERACTIVE LAB</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-[#39FF14]/15 text-[#39FF14] font-display text-[10px] tracking-widest">60 FPS WEBGL</span>
+                    </div>
+
+                    <h2 class="font-display font-black text-2xl sm:text-4xl uppercase tracking-tight mb-3">
+                        EXPERIENCE THE <span class="text-[#39FF14] neon-text">ENERGY</span>
+                    </h2>
+                    <p class="text-sm sm:text-base text-neutral-300 leading-relaxed mb-7">
+                        Take full command of the 3D product rig. Zoom in to inspect ice-cold condensation droplets, trigger high-voltage lightning discharges, or freeze the hydro-splash mid-air.
+                    </p>
+
+                    <div class="space-y-6">
+                        <!-- Camera Zoom Slider -->
+                        <div>
+                            <div class="flex justify-between font-tech font-bold text-xs tracking-[0.2em] uppercase mb-2">
+                                <span class="text-neutral-300">Macro Optical Zoom</span>
+                                <span id="zoom-readout" class="text-[#39FF14] font-display">1.00x</span>
+                            </div>
+                            <input id="zoom-slider" type="range" min="4.0" max="9.5" step="0.1" value="6.8" class="w-full cursor-pointer">
+                        </div>
+
+                        <!-- Manual Spin Velocity Slider -->
+                        <div>
+                            <div class="flex justify-between font-tech font-bold text-xs tracking-[0.2em] uppercase mb-2">
+                                <span class="text-neutral-300">Turbine Spin Rate</span>
+                                <span id="spin-readout" class="text-[#39FF14] font-display">AUTO</span>
+                            </div>
+                            <input id="spin-slider" type="range" min="0" max="4" step="0.1" value="1" class="w-full cursor-pointer">
+                        </div>
+
+                        <!-- Interactive FX Toggles -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <button id="toggle-lightning-btn" class="btn-monster py-3.5 px-4 rounded-xl bg-[#39FF14] text-black font-display font-extrabold text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>TRIGGER LIGHTNING</span>
+                            </button>
+
+                            <button id="toggle-splash-btn" class="py-3.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-[#39FF14]/40 text-white font-display font-bold text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2">
+                                <span>HYDRO SPLASH:</span>
+                                <span id="splash-state-label" class="text-[#39FF14]">FLOW</span>
+                            </button>
+                        </div>
+
+                        <!-- Studio Lighting Atmosphere Presets -->
+                        <div class="pt-2 border-t border-white/10">
+                            <span class="block font-tech font-bold text-xs tracking-[0.2em] uppercase text-neutral-400 mb-2.5">Studio Rim Lighting</span>
+                            <div class="grid grid-cols-3 gap-2.5">
+                                <button data-light="storm" class="light-preset-btn py-2.5 px-2 rounded-xl bg-[#39FF14]/20 border border-[#39FF14] text-[#39FF14] font-tech font-bold text-xs tracking-wider uppercase transition-all">
+                                    Electro Storm
+                                </button>
+                                <button data-light="toxic" class="light-preset-btn py-2.5 px-2 rounded-xl bg-white/5 border border-white/15 text-neutral-300 hover:border-[#39FF14]/50 font-tech font-bold text-xs tracking-wider uppercase transition-all">
+                                    Toxic Acid
+                                </button>
+                                <button data-light="stealth" class="light-preset-btn py-2.5 px-2 rounded-xl bg-white/5 border border-white/15 text-neutral-300 hover:border-[#39FF14]/50 font-tech font-bold text-xs tracking-wider uppercase transition-all">
+                                    Obsidian Rim
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECTION 3: PRODUCT FEATURES (ANIMATED NEON CARDS)
+        ===================================================== -->
+        <section id="features" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto">
+            <div class="pointer-events-auto">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="font-tech font-bold text-xs tracking-[0.35em] uppercase text-[#39FF14]">03 // FORMULA &amp; ENGINEERING</span>
+                    <h2 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight mt-2 mb-4">
+                        ENGINEERED FOR <span class="text-[#39FF14] neon-text">MAXIMUM OUTPUT</span>
+                    </h2>
+                    <p class="text-neutral-300 text-sm sm:text-base">
+                        Every 500ml matte-black cylinder packs a relentless blend of Taurine, Ginseng, Caffeine, and B-Vitamins engineered to shatter limits.
+                    </p>
+                </div>
+
+                <!-- 4 Animated Glassmorphic Feature Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card 1 -->
+                    <div class="feature-card group glass-panel neon-border rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-[#39FF14]/15 border border-[#39FF14]/40 flex items-center justify-center text-[#39FF14] mb-6 group-hover:scale-110 group-hover:bg-[#39FF14] group-hover:text-black transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <span class="font-tech text-xs tracking-[0.25em] text-[#39FF14] uppercase font-bold">01 // VOLTAGE</span>
+                        <h3 class="font-display font-bold text-xl text-white uppercase mt-1 mb-3">Bold Energy Identity</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Unmistakable attitude infused with 160mg of pure caffeine and our signature Taurine matrix for instant ignition.
+                        </p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="feature-card group glass-panel neon-border rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-[#39FF14]/15 border border-[#39FF14]/40 flex items-center justify-center text-[#39FF14] mb-6 group-hover:scale-110 group-hover:bg-[#39FF14] group-hover:text-black transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <span class="font-tech text-xs tracking-[0.25em] text-[#39FF14] uppercase font-bold">02 // AESTHETIC</span>
+                        <h3 class="font-display font-bold text-xl text-white uppercase mt-1 mb-3">Iconic Design</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Tactile matte-obsidian aluminum armor emblazoned with the luminescent triple-claw mark recognized worldwide.
+                        </p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="feature-card group glass-panel neon-border rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-[#39FF14]/15 border border-[#39FF14]/40 flex items-center justify-center text-[#39FF14] mb-6 group-hover:scale-110 group-hover:bg-[#39FF14] group-hover:text-black transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                            </svg>
+                        </div>
+                        <span class="font-tech text-xs tracking-[0.25em] text-[#39FF14] uppercase font-bold">03 // CRISP HIT</span>
+                        <h3 class="font-display font-bold text-xl text-white uppercase mt-1 mb-3">Refreshing Experience</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Smooth, hyper-carbonated citrus-sweet bite chilled to sub-zero perfection that goes down crisp and clean.
+                        </p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="feature-card group glass-panel neon-border rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-[#39FF14]/15 border border-[#39FF14]/40 flex items-center justify-center text-[#39FF14] mb-6 group-hover:scale-110 group-hover:bg-[#39FF14] group-hover:text-black transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <span class="font-tech text-xs tracking-[0.25em] text-[#39FF14] uppercase font-bold">04 // ENDURANCE</span>
+                        <h3 class="font-display font-bold text-xl text-white uppercase mt-1 mb-3">Unleash Your Potential</h3>
+                        <p class="text-sm text-neutral-300 leading-relaxed">
+                            Built for late-night creators, extreme athletes, and competitive gamers who refuse to slow down.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECTION 4: PRODUCT SHOWCASE (MULTI-ANGLE 3D STUDIO)
+        ===================================================== -->
+        <section id="showcase" class="min-h-screen py-24 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col justify-between">
+            <div class="pointer-events-auto max-w-xl">
+                <span class="font-tech font-bold text-xs tracking-[0.35em] uppercase text-[#39FF14]">04 // 360° PRODUCT CINEMATOGRAPHY</span>
+                <h2 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight mt-2 mb-3">
+                    MULTI-ANGLE <span class="text-[#39FF14] neon-text">SHOWCASE</span>
+                </h2>
+                <p id="angle-description" class="text-sm sm:text-base text-neutral-300 leading-relaxed">
+                    Select a commercial camera rig angle below to inspect the brushed aluminum crown, front neon claw emblem, or back energy blend specs.
+                </p>
+            </div>
+
+            <!-- Bottom Multi-Angle Camera Selector Bar -->
+            <div class="pointer-events-auto mt-auto pt-12">
+                <div class="glass-panel neon-border rounded-3xl p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <button data-angle="hero" class="angle-btn text-left p-4 rounded-2xl bg-[#39FF14]/20 border border-[#39FF14] transition-all">
+                        <div class="font-tech text-xs tracking-[0.2em] text-[#39FF14] uppercase font-bold">CAM 01</div>
+                        <div class="font-display font-bold text-sm sm:text-base text-white mt-0.5">Hero Claw Emblem</div>
+                        <div class="text-xs text-neutral-400 mt-1">Classic tilted zero-G commercial shot</div>
+                    </button>
+
+                    <button data-angle="top" class="angle-btn text-left p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 transition-all">
+                        <div class="font-tech text-xs tracking-[0.2em] text-[#39FF14] uppercase font-bold">CAM 02</div>
+                        <div class="font-display font-bold text-sm sm:text-base text-white mt-0.5">Crown &amp; Pull-Tab</div>
+                        <div class="text-xs text-neutral-400 mt-1">Brushed silver rim &amp; Taurine ring</div>
+                    </button>
+
+                    <button data-angle="back" class="angle-btn text-left p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 transition-all">
+                        <div class="font-tech text-xs tracking-[0.2em] text-[#39FF14] uppercase font-bold">CAM 03</div>
+                        <div class="font-display font-bold text-sm sm:text-base text-white mt-0.5">Energy Blend Specs</div>
+                        <div class="text-xs text-neutral-400 mt-1">180° rear formula &amp; nutrition matrix</div>
+                    </button>
+
+                    <button data-angle="low" class="angle-btn text-left p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 transition-all">
+                        <div class="font-tech text-xs tracking-[0.2em] text-[#39FF14] uppercase font-bold">CAM 04</div>
+                        <div class="font-display font-bold text-sm sm:text-base text-white mt-0.5">Low-Angle Titan</div>
+                        <div class="text-xs text-neutral-400 mt-1">Dramatic upward hydro-splash perspective</div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECTION 5: BRAND EXPERIENCE (KINETIC TELEMETRY)
+        ===================================================== -->
+        <section id="brand" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto">
+            <div class="pointer-events-auto relative rounded-[2.2rem] overflow-hidden glass-panel neon-border p-8 sm:p-14 lg:p-20">
+                <!-- Ambient Neon Green Gradient Glow Inside Banner -->
+                <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#39FF14]/15 blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-[#39FF14]/10 blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7">
+                        <span class="font-tech font-bold text-xs tracking-[0.35em] uppercase text-[#39FF14]">05 // THE LIFESTYLE IN A CAN</span>
+                        <h2 class="font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-[1.06] mt-3 mb-6">
+                            NOT JUST A DRINK. <br>
+                            <span class="text-[#39FF14] neon-text">PURE ADRENALINE.</span>
+                        </h2>
+                        <p class="text-neutral-300 text-base sm:text-lg leading-relaxed max-w-2xl">
+                            From underground motocross tracks and midnight studio sessions to stadium championship arenas—Monster Energy fuels the relentless athletes, musicians, and rebels who rewrite the rules.
+                        </p>
+                    </div>
+
+                    <!-- Telemetry Counters -->
+                    <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
+                        <div class="p-5 rounded-2xl bg-black/50 border border-[#39FF14]/30 flex items-center justify-between">
+                            <div>
+                                <div class="font-tech text-xs tracking-[0.25em] text-neutral-400 uppercase">ACTIVE CAFFEINE</div>
+                                <div class="font-display font-black text-3xl text-[#39FF14] neon-text">160 MG</div>
+                            </div>
+                            <span class="font-tech text-xs px-3 py-1 rounded-full bg-[#39FF14]/15 text-[#39FF14] uppercase font-bold">High Output</span>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-black/50 border border-[#39FF14]/30 flex items-center justify-between">
+                            <div>
+                                <div class="font-tech text-xs tracking-[0.25em] text-neutral-400 uppercase">TAURINE + B-VITAMINS</div>
+                                <div class="font-display font-black text-3xl text-white">2,500 MG</div>
+                            </div>
+                            <span class="font-tech text-xs px-3 py-1 rounded-full bg-white/10 text-neutral-200 uppercase font-bold">Core Blend</span>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-black/50 border border-[#39FF14]/30 flex items-center justify-between">
+                            <div>
+                                <div class="font-tech text-xs tracking-[0.25em] text-neutral-400 uppercase">COMPROMISE</div>
+                                <div class="font-display font-black text-3xl text-[#39FF14] neon-text">0.00%</div>
+                            </div>
+                            <span class="font-tech text-xs px-3 py-1 rounded-full bg-[#39FF14]/15 text-[#39FF14] uppercase font-bold">Full Throttle</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECTION 6: FINAL CTA — FEEL THE ENERGY
+        ===================================================== -->
+        <section id="cta" class="min-h-[85vh] py-24 px-4 sm:px-8 max-w-5xl mx-auto flex flex-col items-center justify-center text-center">
+            <div class="pointer-events-auto glass-panel neon-border rounded-[2.5rem] p-10 sm:p-16 w-full relative overflow-hidden">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#39FF14]/15 border border-[#39FF14]/40 font-tech font-bold text-xs tracking-[0.3em] uppercase text-[#39FF14] mb-6">
+                    <span>READY TO IGNITE</span>
+                </div>
+
+                <h2 class="font-display font-black text-3xl sm:text-5xl lg:text-6xl uppercase tracking-tight leading-[1.08] mb-6">
+                    FEEL THE ENERGY. <br>
+                    <span class="text-[#39FF14] neon-text-strong">UNLEASH THE BEAST.</span>
+                </h2>
+
+                <p class="font-tech text-lg sm:text-xl text-neutral-300 max-w-xl mx-auto mb-10">
+                    Crack open the cold aluminum. Trigger a full-spectrum electric shockwave and claim your territory.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <button id="final-explore-btn" class="btn-monster px-10 py-5 rounded-2xl bg-[#39FF14] text-black font-display font-black text-sm sm:text-base tracking-[0.22em] uppercase shadow-[0_0_35px_rgba(57,255,20,0.75)]">
+                        EXPLORE NOW
+                    </button>
+                </div>
+
+                <!-- Interactive Drop / Locator Toast Notification (Replaces alert) -->
+                <div id="unleash-toast" class="hidden mt-8 p-4 rounded-2xl bg-[#39FF14]/15 border border-[#39FF14] text-white font-tech text-base tracking-wider">
+                    <span class="text-[#39FF14] font-bold uppercase">SHOCKWAVE DEPLOYED:</span> High-voltage energy surge activated across the 3D stage!
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             FOOTER
+        ===================================================== -->
+        <footer class="py-10 px-4 sm:px-8 border-t border-white/10 bg-[#050505]/90 backdrop-blur-xl">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-tech tracking-[0.2em] uppercase text-neutral-400 pointer-events-auto">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#39FF14] shadow-[0_0_10px_#39FF14]"></span>
+                    <span class="font-display font-bold text-white">MONSTER ENERGY</span>
+                    <span>&copy; 2026 UNLEASH THE BEAST 3D</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="#hero" class="hover:text-[#39FF14] transition-colors">Top</a>
+                    <a href="#experience" class="hover:text-[#39FF14] transition-colors">3D Lab</a>
+                    <a href="#showcase" class="hover:text-[#39FF14] transition-colors">Showcase</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- =========================================================
+         THREE.JS + GSAP 3D ENGINE SCRIPT
+    ========================================================= -->
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Register GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ==========================================
+        // 1. GLOBAL ENGINE STATE
+        // ==========================================
+        const isMobile = window.innerWidth < 768;
+        const state = {
+            targetRotX: 0.08,
+            targetRotY: -0.25,
+            targetTiltZ: -0.18, // Signature dynamic tilt matching reference image
+            isDragging: false,
+            prevMouseX: 0,
+            prevMouseY: 0,
+            mouseNormX: 0,
+            mouseNormY: 0,
+            autoSpinSpeed: 1.0,
+            cameraZoom: isMobile ? 8.2 : 6.8,
+            splashActive: true,
+            lightningTimer: 0,
+            surgeIntensity: 1.0,
+            manualCameraOverride: false,
+            scrollOffsetX: 0,
+            scrollOffsetY: 0,
+            scrollRotY: 0
+        };
+
+        // ==========================================
+        // 2. PROCEDURAL HIGH-RES CAN TEXTURE GENERATOR
+        //    (Matches uploaded image: Black matte body,
+        //     Taurine top text, Neon Green Claw Mark,
+        //     Bold MONSTER ENERGY bottom logo + rear specs)
+        // ==========================================
+        function createMonsterCanTextures() {
+            const width = 2048;
+            const height = 2048;
+
+            // --- A. Diffuse / Albedo Canvas ---
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Deep Matte Obsidian Black Base
+            ctx.fillStyle = '#070807';
+            ctx.fillRect(0, 0, width, height);
+
+            // Subtle dark metallic vertical grain & green edge rim sheen
+            const bgGrad = ctx.createLinearGradient(0, 0, width, 0);
+            bgGrad.addColorStop(0, '#040504');
+            bgGrad.addColorStop(0.22, '#0c120b');
+            bgGrad.addColorStop(0.5, '#070907');
+            bgGrad.addColorStop(0.78, '#0c120b');
+            bgGrad.addColorStop(1, '#040504');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Front center X coordinate (cylinder UV maps u=0.5 to front when rotated appropriately)
+            const frontX = width * 0.5;
+            const backX = width * 0.0; // Seam / Back
+
+            // Top "TAURINE" Curved/Spaced Typography
+            ctx.save();
+            ctx.fillStyle = '#e5e7eb';
+            ctx.font = '700 44px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            const taurineText = 'T  A  U  R  I  N  E';
+            ctx.fillText(taurineText, frontX, 175);
+            ctx.restore();
+
+            // Iconic Jagged Neon Green Monster "M" Claw Mark
+            ctx.save();
+            ctx.shadowColor = '#39FF14';
+            ctx.shadowBlur = 28;
+
+            const clawGrad = ctx.createLinearGradient(frontX - 180, 320, frontX + 180, 1250);
+            clawGrad.addColorStop(0, '#7dff5e');
+            clawGrad.addColorStop(0.45, '#39FF14');
+            clawGrad.addColorStop(1, '#24b809');
+            ctx.fillStyle = clawGrad;
+
+            // Left Claw Stroke
+            ctx.beginPath();
+            ctx.moveTo(frontX - 210, 340);
+            ctx.lineTo(frontX - 115, 310);
+            ctx.lineTo(frontX - 95, 390);
+            ctx.lineTo(frontX - 118, 680);
+            ctx.lineTo(frontX - 105, 920);
+            ctx.lineTo(frontX - 135, 1180);
+            ctx.lineTo(frontX - 165, 1230);
+            ctx.lineTo(frontX - 162, 910);
+            ctx.lineTo(frontX - 178, 650);
+            ctx.lineTo(frontX - 165, 420);
+            ctx.lineTo(frontX - 235, 405);
+            ctx.closePath();
+            ctx.fill();
+
+            // Center Claw Stroke (Longest)
+            ctx.beginPath();
+            ctx.moveTo(frontX - 55, 305);
+            ctx.lineTo(frontX + 55, 275);
+            ctx.lineTo(frontX + 75, 375);
+            ctx.lineTo(frontX + 45, 710);
+            ctx.lineTo(frontX + 58, 990);
+            ctx.lineTo(frontX + 20, 1295);
+            ctx.lineTo(frontX - 18, 1345);
+            ctx.lineTo(frontX - 8, 980);
+            ctx.lineTo(frontX - 25, 690);
+            ctx.lineTo(frontX - 10, 395);
+            ctx.lineTo(frontX - 82, 375);
+            ctx.closePath();
+            ctx.fill();
+
+            // Right Claw Stroke
+            ctx.beginPath();
+            ctx.moveTo(frontX + 115, 345);
+            ctx.lineTo(frontX + 225, 315);
+            ctx.lineTo(frontX + 242, 410);
+            ctx.lineTo(frontX + 208, 690);
+            ctx.lineTo(frontX + 220, 930);
+            ctx.lineTo(frontX + 182, 1170);
+            ctx.lineTo(frontX + 148, 1215);
+            ctx.lineTo(frontX + 158, 915);
+            ctx.lineTo(frontX + 142, 660);
+            ctx.lineTo(frontX + 155, 430);
+            ctx.lineTo(frontX + 92, 415);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Bold "MONSTER" Typography Below Claw
+            ctx.save();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '900 116px "Orbitron", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(57, 255, 20, 0.45)';
+            ctx.shadowBlur = 16;
+            ctx.fillText('MONSTER', frontX, 1510);
+
+            // Spaced Neon Green "ENERGY" Subtitle
+            ctx.fillStyle = '#39FF14';
+            ctx.font = '800 54px "Orbitron", sans-serif';
+            ctx.fillText('E  N  E  R  G  Y', frontX, 1595);
+            ctx.restore();
+
+            // --- Back Side Details (Nutrition & Lore at u=0 / u=1) ---
+            function drawBackLabel(offsetX) {
+                ctx.save();
+                ctx.fillStyle = '#39FF14';
+                ctx.font = '800 42px "Orbitron", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('UNLEASH THE BEAST!', offsetX, 380);
+
+                ctx.fillStyle = '#a3a3a3';
+                ctx.font = '500 26px "Rajdhani", sans-serif';
+                const lines = [
+                    'TEAR INTO A CAN OF THE MEANEST ENERGY DRINK',
+                    'ON THE PLANET, MONSTER ENERGY.',
+                    'IT IS THE IDEAL COMBO OF THE RIGHT INGREDIENTS',
+                    'IN THE RIGHT PROPORTION TO DELIVER THE BIG BAD',
+                    'BUZZ THAT ONLY MONSTER CAN.'
+                ];
+                lines.forEach((line, idx) => {
+                    ctx.fillText(line, offsetX, 455 + idx * 38);
+                });
+
+                // Nutrition Facts Box
+                ctx.strokeStyle = '#39FF14';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(offsetX - 220, 720, 440, 560);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 36px "Orbitron", sans-serif';
+                ctx.fillText('ENERGY TELEMETRY', offsetX, 780);
+
+                ctx.font = '600 30px "Rajdhani", sans-serif';
+                ctx.fillStyle = '#39FF14';
+                ctx.fillText('CAFFEINE ..................... 160 MG', offsetX, 860);
+                ctx.fillStyle = '#e5e5e5';
+                ctx.fillText('TAURINE ..................... 2000 MG', offsetX, 920);
+                ctx.fillText('L-CARNITINE ................... 500 MG', offsetX, 980);
+                ctx.fillText('GINSENG EXTRACT ............... 200 MG', offsetX, 1040);
+                ctx.fillText('VITAMINS B2 / B3 / B6 / B12 ... 100%', offsetX, 1100);
+                ctx.fillStyle = '#39FF14';
+                ctx.fillText('VOLUME ........................ 500 ML', offsetX, 1190);
+                ctx.restore();
+            }
+            drawBackLabel(0);
+            drawBackLabel(width);
+
+            const diffuseMap = new THREE.CanvasTexture(canvas);
+            diffuseMap.colorSpace = THREE.SRGBColorSpace;
+            diffuseMap.anisotropy = 8;
+
+            // --- B. Condensation Water Droplets Bump & Roughness Map ---
+            const bumpCanvas = document.createElement('canvas');
+            bumpCanvas.width = 1024;
+            bumpCanvas.height = 1024;
+            const bCtx = bumpCanvas.getContext('2d');
+
+            // Base matte roughness (medium-high grey)
+            bCtx.fillStyle = '#404040';
+            bCtx.fillRect(0, 0, 1024, 1024);
+
+            // Generate 2,400 realistic water condensation droplets of varying sizes
+            for (let i = 0; i < 2400; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 1024;
+                const r = 1.2 + Math.pow(Math.random(), 2.6) * 7.5;
+
+                const dropGrad = bCtx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+                dropGrad.addColorStop(0, '#ffffff');
+                dropGrad.addColorStop(0.7, '#b5b5b5');
+                dropGrad.addColorStop(1, '#404040');
+
+                bCtx.fillStyle = dropGrad;
+                bCtx.beginPath();
+                // Slightly elongated vertical droplet shape
+                bCtx.ellipse(x, y, r * 0.85, r * 1.15, 0, 0, Math.PI * 2);
+                bCtx.fill();
+            }
+
+            const bumpMap = new THREE.CanvasTexture(bumpCanvas);
+            bumpMap.wrapS = THREE.RepeatWrapping;
+            bumpMap.wrapT = THREE.RepeatWrapping;
+
+            return { diffuseMap, bumpMap };
+        }
+
+        // ==========================================
+        // 3. BUILD REALISTIC 3D MONSTER ENERGY CAN
+        // ==========================================
+        function buildMonsterCan() {
+            const canGroup = new THREE.Group();
+            const { diffuseMap, bumpMap } = createMonsterCanTextures();
+
+            // Main Can Dimensions (Realistic 500ml tall sleek proportions)
+            const radius = 0.88;
+            const bodyHeight = 3.15;
+
+            // 1. Main Cylindrical Label Body
+            const bodyGeo = new THREE.CylinderGeometry(radius, radius, bodyHeight, 64, 1, true);
+            // Rotate UV so front logo faces +Z
+            bodyGeo.rotateY(-Math.PI / 2);
+
+            const bodyMat = new THREE.MeshStandardMaterial({
+                map: diffuseMap,
+                bumpMap: bumpMap,
+                bumpScale: 0.032,
+                roughness: 0.34,
+                metalness: 0.55,
+                emissive: new THREE.Color(0x39FF14),
+                emissiveMap: diffuseMap,
+                emissiveIntensity: 0.32
+            });
+            const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+            canGroup.add(bodyMesh);
+
+            // Brushed Silver Aluminum Material for Top/Bottom Rims & Lid
+            const silverMat = new THREE.MeshStandardMaterial({
+                color: 0xd4d8dc,
+                metalness: 0.92,
+                roughness: 0.22
+            });
+
+            // 2. Top Tapered Shoulder (Neck)
+            const topNeckGeo = new THREE.CylinderGeometry(radius * 0.86, radius, 0.22, 64);
+            const topNeckMesh = new THREE.Mesh(topNeckGeo, silverMat);
+            topNeckMesh.position.y = bodyHeight / 2 + 0.11;
+            canGroup.add(topNeckMesh);
+
+            // 3. Top Rolled Lip Rim (Torus)
+            const topRimGeo = new THREE.TorusGeometry(radius * 0.86, 0.032, 16, 64);
+            topRimGeo.rotateX(Math.PI / 2);
+            const topRimMesh = new THREE.Mesh(topRimGeo, silverMat);
+            topRimMesh.position.y = bodyHeight / 2 + 0.22;
+            canGroup.add(topRimMesh);
+
+            // 4. Recessed Top Lid Plate & Pull-Tab
+            const lidPlateGeo = new THREE.CircleGeometry(radius * 0.85, 64);
+            lidPlateGeo.rotateX(-Math.PI / 2);
+            const lidPlateMesh = new THREE.Mesh(lidPlateGeo, silverMat);
+            lidPlateMesh.position.y = bodyHeight / 2 + 0.20;
+            canGroup.add(lidPlateMesh);
+
+            // Pull-Tab Ring
+            const tabGroup = new THREE.Group();
+            const tabRingGeo = new THREE.TorusGeometry(0.18, 0.025, 12, 32);
+            tabRingGeo.rotateX(Math.PI / 2);
+            const tabRing = new THREE.Mesh(tabRingGeo, silverMat);
+            tabRing.scale.set(0.85, 1, 1.35);
+            tabRing.position.set(0, bodyHeight / 2 + 0.225, -0.15);
+            tabGroup.add(tabRing);
+
+            // Neon Green Rivet Accent on Pull-Tab
+            const rivetGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.03, 16);
+            const rivetMat = new THREE.MeshBasicMaterial({ color: 0x39FF14 });
+            const rivet = new THREE.Mesh(rivetGeo, rivetMat);
+            rivet.position.set(0, bodyHeight / 2 + 0.225, 0);
+            tabGroup.add(rivet);
+            canGroup.add(tabGroup);
+
+            // 5. Bottom Tapered Base & Rim
+            const botNeckGeo = new THREE.CylinderGeometry(radius, radius * 0.84, 0.18, 64);
+            const botNeckMesh = new THREE.Mesh(botNeckGeo, silverMat);
+            botNeckMesh.position.y = -bodyHeight / 2 - 0.09;
+            canGroup.add(botNeckMesh);
+
+            const botRimGeo = new THREE.TorusGeometry(radius * 0.84, 0.03, 16, 64);
+            botRimGeo.rotateX(Math.PI / 2);
+            const botRimMesh = new THREE.Mesh(botRimGeo, silverMat);
+            botRimMesh.position.y = -bodyHeight / 2 - 0.18;
+            canGroup.add(botRimMesh);
+
+            const botCapGeo = new THREE.CircleGeometry(radius * 0.83, 64);
+            botCapGeo.rotateX(Math.PI / 2);
+            const botCapMesh = new THREE.Mesh(botCapGeo, silverMat);
+            botCapMesh.position.y = -bodyHeight / 2 - 0.17;
+            canGroup.add(botCapMesh);
+
+            // 6. 3D Physical Water Droplets Clinging to Can Exterior
+            const dropCount = isMobile ? 75 : 140;
+            const dropGeo = new THREE.SphereGeometry(0.022, 10, 10);
+            const dropMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                transmission: 0.9,
+                opacity: 0.95,
+                transparent: true,
+                roughness: 0.05,
+                ior: 1.33
+            });
+            const dropInstanced = new THREE.InstancedMesh(dropGeo, dropMat, dropCount);
+            const dummy = new THREE.Object3D();
+
+            for (let i = 0; i < dropCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const y = (Math.random() - 0.5) * (bodyHeight - 0.25);
+                const r = radius + 0.006;
+                dummy.position.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
+                const s = 0.6 + Math.random() * 1.3;
+                dummy.scale.set(s * 0.85, s * 1.25, s * 0.65);
+                dummy.lookAt(0, y, 0);
+                dummy.updateMatrix();
+                dropInstanced.setMatrixAt(i, dummy.matrix);
+            }
+            canGroup.add(dropInstanced);
+
+            return canGroup;
+        }
+
+        // ==========================================
+        // 4. PROCEDURAL 3D ELECTRIC LIGHTNING BOLTS
+        // ==========================================
+        function createLightningSystem() {
+            const lightningGroup = new THREE.Group();
+            const bolts = [];
+
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xeaffea });
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0x39FF14,
+                transparent: true,
+                opacity: 0.65,
+                blending: THREE.AdditiveBlending
+            });
+
+            function generateBoltPoints(start, end, segments = 14, jitter = 0.45) {
+                const points = [start.clone()];
+                for (let i = 1; i < segments; i++) {
+                    const t = i / segments;
+                    const pt = new THREE.Vector3().lerpVectors(start, end, t);
+                    const envelope = Math.sin(t * Math.PI); // Taper jitter at endpoints
+                    pt.x += (Math.random() - 0.5) * jitter * envelope;
+                    pt.y += (Math.random() - 0.5) * jitter * envelope;
+                    pt.z += (Math.random() - 0.5) * jitter * envelope;
+                    points.push(pt);
+                }
+                points.push(end.clone());
+                return points;
+            }
+
+            const boltCount = isMobile ? 5 : 8;
+            for (let i = 0; i < boltCount; i++) {
+                const boltWrapper = new THREE.Group();
+                lightningGroup.add(boltWrapper);
+                bolts.push({
+                    wrapper: boltWrapper,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: 6 + Math.random() * 8
+                });
+            }
+
+            function rebuildBolts(spreadMultiplier = 1.0) {
+                bolts.forEach((b, idx) => {
+                    // Clear previous geometry
+                    while (b.wrapper.children.length > 0) {
+                        const child = b.wrapper.children[0];
+                        child.geometry.dispose();
+                        b.wrapper.remove(child);
+                    }
+
+                    const angle = (idx / bolts.length) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+                    const innerR = 0.95;
+                    const outerR = (2.4 + Math.random() * 1.8) * spreadMultiplier;
+
+                    const start = new THREE.Vector3(
+                        Math.cos(angle) * innerR,
+                        (Math.random() - 0.5) * 2.6,
+                        Math.sin(angle) * innerR
+                    );
+                    const end = new THREE.Vector3(
+                        Math.cos(angle + (Math.random() - 0.5) * 0.8) * outerR,
+                        (Math.random() - 0.5) * 3.8 * spreadMultiplier,
+                        Math.sin(angle + (Math.random() - 0.5) * 0.8) * outerR
+                    );
+
+                    const pts = generateBoltPoints(start, end, 12, 0.65 * spreadMultiplier);
+                    const curve = new THREE.CatmullRomCurve3(pts);
+
+                    const coreGeo = new THREE.TubeGeometry(curve, 18, 0.014, 5, false);
+                    const glowGeo = new THREE.TubeGeometry(curve, 18, 0.048, 6, false);
+
+                    b.wrapper.add(new THREE.Mesh(coreGeo, coreMat));
+                    b.wrapper.add(new THREE.Mesh(glowGeo, glowMat));
+                });
+            }
+
+            rebuildBolts(1.0);
+            return { lightningGroup, bolts, rebuildBolts };
+        }
+
+        // ==========================================
+        // 5. DYNAMIC WATER SPLASH CREST & DROPLETS
+        // ==========================================
+        function createWaterSplashSystem() {
+            const splashGroup = new THREE.Group();
+
+            // Translucent Refractive Water Material
+            const waterMat = new THREE.MeshPhysicalMaterial({
+                color: 0xd8ffe0,
+                emissive: 0x0b3d05,
+                emissiveIntensity: 0.35,
+                roughness: 0.08,
+                metalness: 0.1,
+                transmission: 0.82,
+                transparent: true,
+                opacity: 0.88,
+                ior: 1.333,
+                side: THREE.DoubleSide
+            });
+
+            // Sculpted Sweeping Water Ribbons Behind & Around the Can
+            const ribbonConfigs = [
+                {
+                    pts: [
+                        new THREE.Vector3(-0.3, -1.7, -0.4),
+                        new THREE.Vector3(1.1, -0.8, -0.7),
+                        new THREE.Vector3(1.85, 0.5, -0.6),
+                        new THREE.Vector3(1.45, 1.95, -0.3),
+                        new THREE.Vector3(2.1, 2.75, -0.1)
+                    ],
+                    radius: 0.24
+                },
+                {
+                    pts: [
+                        new THREE.Vector3(0.2, -1.75, -0.3),
+                        new THREE.Vector3(-1.05, -0.95, -0.5),
+                        new THREE.Vector3(-1.75, 0.15, -0.35),
+                        new THREE.Vector3(-1.35, 1.35, 0.1)
+                    ],
+                    radius: 0.2
+                },
+                {
+                    pts: [
+                        new THREE.Vector3(-1.4, -1.8, 0.3),
+                        new THREE.Vector3(0.0, -1.65, 0.75),
+                        new THREE.Vector3(1.3, -1.55, 0.45)
+                    ],
+                    radius: 0.18
+                }
+            ];
+
+            ribbonConfigs.forEach(cfg => {
+                const curve = new THREE.CatmullRomCurve3(cfg.pts);
+                const tubeGeo = new THREE.TubeGeometry(curve, 44, cfg.radius, 12, false);
+
+                // Taper the water ribbon thickness along its length for organic splash spikes
+                const posAttr = tubeGeo.attributes.position;
+                const v = new THREE.Vector3();
+                for (let i = 0; i < posAttr.count; i++) {
+                    const ringIdx = Math.floor(i / 13);
+                    const progress = ringIdx / 44;
+                    const centerPt = curve.getPointAt(Math.min(progress, 1));
+                    v.fromBufferAttribute(posAttr, i);
+
+                    const taper = Math.sin(progress * Math.PI * 0.85 + 0.25) * (1 - progress * 0.55);
+                    v.sub(centerPt).multiplyScalar(Math.max(0.15, taper)).add(centerPt);
+                    posAttr.setXYZ(i, v.x, v.y, v.z);
+                }
+                tubeGeo.computeVertexNormals();
+
+                const mesh = new THREE.Mesh(tubeGeo, waterMat);
+                splashGroup.add(mesh);
+            });
+
+            // Floating Mid-Air Water Droplets & Neon Sparks
+            const dropletCount = isMobile ? 160 : 320;
+            const dropletGeo = new THREE.SphereGeometry(0.038, 8, 8);
+            const dropletInstanced = new THREE.InstancedMesh(dropletGeo, waterMat, dropletCount);
+
+            const dropletData = [];
+            const dummy = new THREE.Object3D();
+
+            for (let i = 0; i < dropletCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 1.15 + Math.random() * 2.8;
+                const y = (Math.random() - 0.5) * 4.6;
+                const scale = 0.35 + Math.random() * 1.4;
+
+                dropletData.push({
+                    angle,
+                    dist,
+                    baseY: y,
+                    speed: 0.4 + Math.random() * 0.8,
+                    phase: Math.random() * Math.PI * 2,
+                    scale
+                });
+
+                dummy.position.set(Math.cos(angle) * dist, y, Math.sin(angle) * dist);
+                dummy.scale.setScalar(scale);
+                dummy.updateMatrix();
+                dropletInstanced.setMatrixAt(i, dummy.matrix);
+            }
+            splashGroup.add(dropletInstanced);
+
+            return { splashGroup, dropletInstanced, dropletData };
+        }
+
+        // ==========================================
+        // 6. VOLUMETRIC SMOKE & GLOWING EMBER PARTICLES
+        // ==========================================
+        function createAtmosphereParticles() {
+            const count = isMobile ? 220 : 450;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            const colorNeon = new THREE.Color(0x39FF14);
+            const colorWhite = new THREE.Color(0xd1fae5);
+
+            for (let i = 0; i < count; i++) {
+                const i3 = i * 3;
+                const r = 1.5 + Math.random() * 7.5;
+                const theta = Math.random() * Math.PI * 2;
+                positions[i3] = Math.cos(theta) * r;
+                positions[i3 + 1] = (Math.random() - 0.5) * 7.5;
+                positions[i3 + 2] = Math.sin(theta) * r - 1.0;
+
+                const c = Math.random() > 0.25 ? colorNeon : colorWhite;
+                colors[i3] = c.r;
+                colors[i3 + 1] = c.g;
+                colors[i3 + 2] = c.b;
+            }
+
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            // Soft circular glow sprite texture
+            const spriteCanvas = document.createElement('canvas');
+            spriteCanvas.width = 64;
+            spriteCanvas.height = 64;
+            const sCtx = spriteCanvas.getContext('2d');
+            const grad = sCtx.createRadialGradient(32, 32, 2, 32, 32, 30);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.4, 'rgba(57,255,20,0.6)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            sCtx.fillStyle = grad;
+            sCtx.fillRect(0, 0, 64, 64);
+            const spriteTex = new THREE.CanvasTexture(spriteCanvas);
+
+            const mat = new THREE.PointsMaterial({
+                size: 0.14,
+                map: spriteTex,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.85,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            return new THREE.Points(geo, mat);
+        }
+
+        // ==========================================
+        // 7. SCENE INITIALIZATION & LIGHTING
+        // ==========================================
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.055);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 0.2, state.cameraZoom);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+        container.appendChild(renderer.domElement);
+
+        // Studio Lighting Setup
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+        scene.add(ambientLight);
+
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+        keyLight.position.set(4, 6, 6);
+        scene.add(keyLight);
+
+        const rimLightGreen = new THREE.PointLight(0x39FF14, 14, 18);
+        rimLightGreen.position.set(-2.8, 1.5, -1.8);
+        scene.add(rimLightGreen);
+
+        const rimLightRight = new THREE.PointLight(0x39FF14, 12, 18);
+        rimLightRight.position.set(3.2, -1.2, 1.5);
+        scene.add(rimLightRight);
+
+        const topAccentLight = new THREE.PointLight(0xffffff, 6, 14);
+        topAccentLight.position.set(0, 4.5, 2.5);
+        scene.add(topAccentLight);
+
+        // Wet Reflective Dark Ground Stage (Matches bottom impact pool in reference)
+        const floorGeo = new THREE.CircleGeometry(9, 64);
+        floorGeo.rotateX(-Math.PI / 2);
+        const floorMat = new THREE.MeshStandardMaterial({
+            color: 0x060a06,
+            metalness: 0.85,
+            roughness: 0.18
+        });
+        const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+        floorMesh.position.y = -2.45;
+        scene.add(floorMesh);
+
+        // Neon Energy Shockwave Ring on Floor
+        const shockwaveGeo = new THREE.RingGeometry(1.1, 1.35, 64);
+        shockwaveGeo.rotateX(-Math.PI / 2);
+        const shockwaveMat = new THREE.MeshBasicMaterial({
+            color: 0x39FF14,
+            transparent: true,
+            opacity: 0.45,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending
+        });
+        const shockwaveMesh = new THREE.Mesh(shockwaveGeo, shockwaveMat);
+        shockwaveMesh.position.y = -2.42;
+        scene.add(shockwaveMesh);
+
+        // Assemble Hero Stage Group
+        const stageGroup = new THREE.Group();
+        scene.add(stageGroup);
+
+        const monsterCan = buildMonsterCan();
+        monsterCan.rotation.z = state.targetTiltZ;
+        stageGroup.add(monsterCan);
+
+        const { lightningGroup, bolts, rebuildBolts } = createLightningSystem();
+        stageGroup.add(lightningGroup);
+
+        const { splashGroup, dropletInstanced, dropletData } = createWaterSplashSystem();
+        stageGroup.add(splashGroup);
+
+        const emberParticles = createAtmosphereParticles();
+        scene.add(emberParticles);
+
+        // ==========================================
+        // 8. LIGHTNING SURGE & SHOCKWAVE TRIGGER
+        // ==========================================
+        function triggerElectricSurge(intensity = 2.2) {
+            state.surgeIntensity = intensity;
+            rebuildBolts(1.25);
+
+            // Flash studio neon rim lights
+            gsap.fromTo(rimLightGreen, { intensity: 35 }, { intensity: 14, duration: 0.85, ease: 'power3.out' });
+            gsap.fromTo(rimLightRight, { intensity: 30 }, { intensity: 12, duration: 0.85, ease: 'power3.out' });
+
+            // Expand floor shockwave ring
+            gsap.fromTo(shockwaveMesh.scale, { x: 0.8, y: 0.8, z: 0.8 }, { x: 4.5, y: 4.5, z: 4.5, duration: 1.1, ease: 'power2.out' });
+            gsap.fromTo(shockwaveMat, { opacity: 0.9 }, { opacity: 0.25, duration: 1.1, ease: 'power2.out' });
+
+            // Can energetic recoil pulse
+            gsap.fromTo(monsterCan.scale, { x: 1.07, y: 1.07, z: 1.07 }, { x: 1, y: 1, z: 1, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+        }
+
+        // ==========================================
+        // 9. GSAP SCROLL CHOREOGRAPHY
+        // ==========================================
+        function initScrollChoreography() {
+            // Section 2: Experience Lab — Shift can left on desktop to frame control deck
+            gsap.to(state, {
+                scrollOffsetX: isMobile ? 0 : -1.55,
+                scrollRotY: Math.PI * 0.35,
+                scrollTrigger: {
+                    trigger: '#experience',
+                    start: 'top bottom',
+                    end: 'center center',
+                    scrub: 1.2
+                }
+            });
+
+            // Section 3: Features — Center and elevate slightly
+            gsap.to(state, {
+                scrollOffsetX: 0,
+                scrollOffsetY: 0.35,
+                scrollRotY: Math.PI * 1.15,
+                scrollTrigger: {
+                    trigger: '#features',
+                    start: 'top bottom',
+                    end: 'center center',
+                    scrub: 1.2
+                }
+            });
+
+            // Section 4: Showcase — Return to eye-level showcase
+            gsap.to(state, {
+                scrollOffsetX: isMobile ? 0 : 1.35,
+                scrollOffsetY: 0.15,
+                scrollRotY: Math.PI * 2.0,
+                scrollTrigger: {
+                    trigger: '#showcase',
+                    start: 'top bottom',
+                    end: 'center center',
+                    scrub: 1.2
+                }
+            });
+
+            // Section 6: Final CTA — Grand centered hero finale
+            gsap.to(state, {
+                scrollOffsetX: 0,
+                scrollOffsetY: 0.1,
+                scrollRotY: Math.PI * 2.0,
+                scrollTrigger: {
+                    trigger: '#cta',
+                    start: 'top bottom',
+                    end: 'center center',
+                    scrub: 1.2
+                }
+            });
+
+            // Animate Feature Cards Entrance
+            gsap.from('.feature-card', {
+                y: 45,
+                opacity: 0,
+                duration: 0.75,
+                stagger: 0.12,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#features',
+                    start: 'top 78%'
+                }
+            });
+        }
+
+        // ==========================================
+        // 10. POINTER, TOUCH & UI EVENT LISTENERS
+        // ==========================================
+        const cursorAura = document.getElementById('cursor-aura');
+
+        window.addEventListener('mousemove', (e) => {
+            state.mouseNormX = (e.clientX / window.innerWidth) * 2 - 1;
+            state.mouseNormY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            // Update mouse-following green aura
+            if (cursorAura) {
+                cursorAura.style.left = `${e.clientX}px`;
+                cursorAura.style.top = `${e.clientY}px`;
+            }
+
+            if (state.isDragging) {
+                const dx = e.clientX - state.prevMouseX;
+                const dy = e.clientY - state.prevMouseY;
+                state.targetRotY += dx * 0.0085;
+                state.targetRotX += dy * 0.0065;
+                state.targetRotX = Math.max(-0.85, Math.min(0.85, state.targetRotX));
+                state.prevMouseX = e.clientX;
+                state.prevMouseY = e.clientY;
+            }
+        });
+
+        container.addEventListener('mousedown', (e) => {
+            state.isDragging = true;
+            state.prevMouseX = e.clientX;
+            state.prevMouseY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            state.isDragging = false;
+        });
+
+        // Touch Support
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                state.isDragging = true;
+                state.prevMouseX = e.touches[0].clientX;
+                state.prevMouseY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            state.isDragging = false;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (state.isDragging && e.touches.length === 1) {
+                const dx = e.touches[0].clientX - state.prevMouseX;
+                const dy = e.touches[0].clientY - state.prevMouseY;
+                state.targetRotY += dx * 0.01;
+                state.targetRotX += dy * 0.008;
+                state.targetRotX = Math.max(-0.85, Math.min(0.85, state.targetRotX));
+                state.prevMouseX = e.touches[0].clientX;
+                state.prevMouseY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- UI Interactive Controls ---
+        // 1. Zoom Slider
+        const zoomSlider = document.getElementById('zoom-slider');
+        const zoomReadout = document.getElementById('zoom-readout');
+        zoomSlider.addEventListener('input', (e) => {
+            state.cameraZoom = parseFloat(e.target.value);
+            const zoomFactor = (6.8 / state.cameraZoom).toFixed(2);
+            zoomReadout.textContent = `${zoomFactor}x`;
+        });
+
+        // 2. Spin Rate Slider
+        const spinSlider = document.getElementById('spin-slider');
+        const spinReadout = document.getElementById('spin-readout');
+        spinSlider.addEventListener('input', (e) => {
+            state.autoSpinSpeed = parseFloat(e.target.value);
+            spinReadout.textContent = state.autoSpinSpeed === 0 ? 'LOCKED' : `${state.autoSpinSpeed.toFixed(1)}x`;
+        });
+
+        // 3. Trigger Lightning Buttons
+        document.getElementById('toggle-lightning-btn').addEventListener('click', () => triggerElectricSurge(2.5));
+        document.getElementById('nav-surge-btn').addEventListener('click', () => triggerElectricSurge(2.5));
+        document.getElementById('hero-explore-btn').addEventListener('click', () => triggerElectricSurge(2.2));
+
+        // 4. Hydro Splash Toggle
+        const toggleSplashBtn = document.getElementById('toggle-splash-btn');
+        const splashStateLabel = document.getElementById('splash-state-label');
+        toggleSplashBtn.addEventListener('click', () => {
+            state.splashActive = !state.splashActive;
+            splashStateLabel.textContent = state.splashActive ? 'FLOW' : 'FROZEN';
+            splashStateLabel.className = state.splashActive ? 'text-[#39FF14]' : 'text-amber-400';
+        });
+
+        // 5. Studio Lighting Presets
+        document.querySelectorAll('.light-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = btn.dataset.light;
+                document.querySelectorAll('.light-preset-btn').forEach(b => {
+                    b.className = 'light-preset-btn py-2.5 px-2 rounded-xl bg-white/5 border border-white/15 text-neutral-300 hover:border-[#39FF14]/50 font-tech font-bold text-xs tracking-wider uppercase transition-all';
+                });
+                btn.className = 'light-preset-btn py-2.5 px-2 rounded-xl bg-[#39FF14]/20 border border-[#39FF14] text-[#39FF14] font-tech font-bold text-xs tracking-wider uppercase transition-all';
+
+                if (preset === 'storm') {
+                    rimLightGreen.color.setHex(0x39FF14);
+                    rimLightRight.color.setHex(0x39FF14);
+                    keyLight.intensity = 2.2;
+                } else if (preset === 'toxic') {
+                    rimLightGreen.color.setHex(0x84ff00);
+                    rimLightRight.color.setHex(0x00ff88);
+                    keyLight.intensity = 1.6;
+                } else if (preset === 'stealth') {
+                    rimLightGreen.color.setHex(0x39FF14);
+                    rimLightRight.color.setHex(0x1f2937);
+                    keyLight.intensity = 0.9;
+                }
+                triggerElectricSurge(1.5);
+            });
+        });
+
+        // 6. Section 4 Multi-Angle Camera Presets
+        const angleDescriptions = {
+            hero: 'Classic zero-G commercial framing showcasing the glowing neon claw emblem and hydro-splash crest.',
+            top: 'Macro elevation highlighting the brushed aluminum rim, pull-tab rivet, and curved TAURINE typography.',
+            back: '180-degree orbital rotation revealing the complete 160mg Caffeine & Taurine Energy Telemetry matrix.',
+            low: 'Dramatic upward titan perspective emphasizing the wet reflective obsidian stage and rising lightning.'
+        };
+
+        document.querySelectorAll('.angle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const angle = btn.dataset.angle;
+                document.querySelectorAll('.angle-btn').forEach(b => {
+                    b.className = 'angle-btn text-left p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 transition-all';
+                });
+                btn.className = 'angle-btn text-left p-4 rounded-2xl bg-[#39FF14]/20 border border-[#39FF14] transition-all';
+                document.getElementById('angle-description').textContent = angleDescriptions[angle];
+
+                // Pause auto-spin briefly so user sees exact angle
+                state.autoSpinSpeed = 0;
+                spinSlider.value = 0;
+                spinReadout.textContent = 'LOCKED';
+
+                if (angle === 'hero') {
+                    gsap.to(state, { targetRotX: 0.08, targetRotY: -0.25 - state.scrollRotY, cameraZoom: 6.5, duration: 1.1, ease: 'power3.out' });
+                } else if (angle === 'top') {
+                    gsap.to(state, { targetRotX: 0.72, targetRotY: 0.15 - state.scrollRotY, cameraZoom: 5.0, duration: 1.1, ease: 'power3.out' });
+                } else if (angle === 'back') {
+                    gsap.to(state, { targetRotX: 0.05, targetRotY: Math.PI - state.scrollRotY, cameraZoom: 6.2, duration: 1.1, ease: 'power3.out' });
+                } else if (angle === 'low') {
+                    gsap.to(state, { targetRotX: -0.52, targetRotY: -0.35 - state.scrollRotY, cameraZoom: 5.6, duration: 1.1, ease: 'power3.out' });
+                }
+                triggerElectricSurge(1.6);
+            });
+        });
+
+        // 7. Section 6 Final CTA "EXPLORE NOW" Shockwave & Feedback
+        const finalExploreBtn = document.getElementById('final-explore-btn');
+        const unleashToast = document.getElementById('unleash-toast');
+        finalExploreBtn.addEventListener('click', () => {
+            triggerElectricSurge(3.2);
+            unleashToast.classList.remove('hidden');
+            gsap.fromTo(unleashToast, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 });
+            setTimeout(() => {
+                unleashToast.classList.add('hidden');
+            }, 4500);
+        });
+
+        // 8. Mobile Navigation Toggle
+        const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+        const mobileNavMenu = document.getElementById('mobile-nav-menu');
+        mobileNavToggle.addEventListener('click', () => {
+            mobileNavMenu.classList.toggle('hidden');
+            mobileNavMenu.classList.toggle('flex');
+        });
+        mobileNavMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavMenu.classList.add('hidden');
+                mobileNavMenu.classList.remove('flex');
+            });
+        });
+
+        // ==========================================
+        // 11. MAIN 60 FPS RENDER & ANIMATION LOOP
+        // ==========================================
+        const clock = new THREE.Clock();
+        const dummyDroplet = new THREE.Object3D();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
+
+            // 1. Continuous Smooth Rotation + Mouse Parallax
+            if (!state.isDragging) {
+                state.targetRotY += delta * 0.35 * state.autoSpinSpeed;
+            }
+
+            const finalRotY = state.targetRotY + state.scrollRotY + state.mouseNormX * 0.28;
+            const finalRotX = state.targetRotX - state.mouseNormY * 0.22;
+
+            monsterCan.rotation.y += (finalRotY - monsterCan.rotation.y) * 0.08;
+            monsterCan.rotation.x += (finalRotX - monsterCan.rotation.x) * 0.08;
+
+            // Zero-G Hover Levitation
+            stageGroup.position.y = state.scrollOffsetY + Math.sin(elapsed * 1.8) * 0.14;
+            stageGroup.position.x += (state.scrollOffsetX - stageGroup.position.x) * 0.07;
+
+            // 2. Electric Lightning Crackling Regeneration
+            state.lightningTimer += delta;
+            if (state.lightningTimer > 0.11) {
+                state.lightningTimer = 0;
+                rebuildBolts(state.surgeIntensity);
+                state.surgeIntensity = Math.max(1.0, state.surgeIntensity * 0.92);
+            }
+
+            bolts.forEach((b) => {
+                const flicker = Math.sin(elapsed * b.speed + b.phase);
+                b.wrapper.visible = flicker > -0.35;
+            });
+
+            // 3. Hydro Splash & Floating Water Droplets Animation
+            if (state.splashActive) {
+                splashGroup.rotation.y = Math.sin(elapsed * 0.7) * 0.14;
+                for (let i = 0; i < dropletData.length; i++) {
+                    const d = dropletData[i];
+                    const curAngle = d.angle + elapsed * 0.25 * d.speed;
+                    const curY = d.baseY + Math.sin(elapsed * 1.6 * d.speed + d.phase) * 0.25;
+                    dummyDroplet.position.set(
+                        Math.cos(curAngle) * d.dist,
+                        curY,
+                        Math.sin(curAngle) * d.dist
+                    );
+                    dummyDroplet.scale.setScalar(d.scale);
+                    dummyDroplet.updateMatrix();
+                    dropletInstanced.setMatrixAt(i, dummyDroplet.matrix);
+                }
+                dropletInstanced.instanceMatrix.needsUpdate = true;
+            }
+
+            // 4. Ember & Smoke Atmosphere Drift
+            emberParticles.rotation.y = elapsed * 0.05;
+            emberParticles.position.y = Math.sin(elapsed * 0.4) * 0.25;
+
+            // 5. Smooth Camera Zoom & Mouse-Following Rim Light
+            camera.position.z += (state.cameraZoom - camera.position.z) * 0.08;
+            camera.position.x += (state.mouseNormX * 0.45 - camera.position.x) * 0.05;
+            camera.position.y += (0.2 + state.mouseNormY * 0.35 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+
+            rimLightRight.position.x = 2.8 + state.mouseNormX * 2.2;
+            rimLightRight.position.y = state.mouseNormY * 2.2;
+
+            renderer.render(scene, camera);
+        }
+
+        // ==========================================
+        // 12. CINEMATIC PRELOADER SEQUENCE & START
+        // ==========================================
+        window.addEventListener('load', () => {
+            const loaderBar = document.getElementById('loader-bar');
+            const loaderPercent = document.getElementById('loader-percent');
+            const preloader = document.getElementById('preloader');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 18) + 12;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+
+                    loaderBar.style.width = '100%';
+                    loaderPercent.textContent = '100%';
+
+                    setTimeout(() => {
+                        preloader.style.opacity = '0';
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                        }, 700);
+
+                        // Start 3D Engine & Entrance Choreography
+                        animate();
+                        initScrollChoreography();
+                        triggerElectricSurge(2.4);
+
+                        gsap.from('.hero-stagger', {
+                            y: 35,
+                            opacity: 0,
+                            duration: 0.9,
+                            stagger: 0.15,
+                            ease: 'power3.out'
+                        });
+                    }, 300);
+                } else {
+                    loaderBar.style.width = `${progress}%`;
+                    loaderPercent.textContent = `${progress}%`;
+                }
+            }, 90);
+        });
+    </script>
+</body>
+</html>
